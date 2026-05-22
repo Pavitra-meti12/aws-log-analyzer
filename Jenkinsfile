@@ -5,7 +5,7 @@ pipeline {
 
         stage('Run Log Analyzer') {
             steps {
-                bat 'python lambda_function.py'
+                bat '"C:\\Users\\pavit\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" lambda_function.py'
             }
         }
     }
