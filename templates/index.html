@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AWS Log Analyzer Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+        }
+
+        .clock {
+            font-size: 18px;
+            color: #38bdf8;
+        }
+
+        .dashboard-card {
+            border-radius: 18px;
+            padding: 25px;
+            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .red {
+            background: linear-gradient(135deg, #ef4444, #991b1b);
+        }
+
+        .yellow {
+            background: linear-gradient(135deg, #facc15, #ca8a04);
+            color: black;
+        }
+
+        .blue {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .green {
+            background: linear-gradient(135deg, #22c55e, #15803d);
+        }
+
+        .purple {
+            background: linear-gradient(135deg, #a855f7, #6b21a8);
+        }
+
+        .dashboard-card h5 {
+            font-size: 18px;
+        }
+
+        .dashboard-card h2 {
+            font-size: 40px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .section-card {
+            background: #1e293b;
+            border-radius: 18px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .severity-box {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .severity-text {
+            font-size: 55px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #38bdf8;
+        }
+
+        .loading-container {
+            width: 100%;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: #38bdf8;
+            transition: 0.5s;
+        }
+
+        .status-indicator {
+            width: 14px;
+            height: 14px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 15px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .report-table th {
+            color: #38bdf8;
+        }
+
+        .severity-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .high {
+            background: #dc2626;
+        }
+
+        .medium {
+            background: #ca8a04;
+        }
+
+        .low {
+            background: #15803d;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container-fluid p-4">
+
+    <div class="topbar">
+
+        <div>
+
+            <div class="title">
+                AWS Log Analyzer Dashboard
+            </div>
+
+            <div class="subtitle">
+                Real-Time Cloud Monitoring & Analysis System
+            </div>
+
+        </div>
+
+        <div class="clock" id="clock"></div>
+
+    </div>
+
+    <div class="loading-container">
+        <div class="loading-bar" id="loadingBar"></div>
+    </div>
+
+    <div class="mb-3">
+        <span class="status-indicator"></span>
+        System Status: ACTIVE
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-3">
+
+            <div class="dashboard-card red">
+
+                <h5>Total Errors</h5>
+
+                <h2 id="errors">0</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="dashboard-card yellow">
+
+                <h5>Warnings</h5>
+
+                <h2 id="warnings">0</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="dashboard-card blue">
+
+                <h5>Critical Issues</h5>
+
+                <h2 id="critical">0</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="dashboard-card green">
+
+                <h5>Failures</h5>
+
+                <h2 id="fails">0</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="section-card">
+
+                <h4 class="mb-4">
+                    Log Analysis Graph
+                </h4>
+
+                <canvas id="myChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="section-card severity-box">
+
+                <h4>Severity Level</h4>
+
+                <div class="severity-text" id="severity">
+                    LOW
+                </div>
+
+                <button class="btn btn-info mt-4" onclick="loadData()">
+                    Refresh Data
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="section-card">
+
+                <h4 class="mb-4">Dashboard Insights</h4>
+
+                <p id="insightText">
+                    Real-time log monitoring is active. Keep an eye on critical alerts and use CloudWatch alarms for faster incident response.
+                </p>
+
+                <ul style="color:#cbd5e1;">
+                    <li id="insightPoint1">Track errors, warnings, and critical failures in one place.</li>
+                    <li id="insightPoint2">Use automated alerts for critical severity events.</li>
+                    <li id="insightPoint3">Review failed logs regularly to prevent system downtime.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="section-card text-center">
+
+                <h4>Report Actions</h4>
+
+                <p style="color:#94a3b8; margin-top: 10px;">
+                    Download the latest log analysis report below.
+                </p>
+
+                <button class="btn btn-info mt-3" onclick="downloadReport()">
+                    Download Report
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        AWS Serverless Monitoring System | Lambda + S3 + SNS + CloudWatch
+    </div>
+
+</div>
+
+<script>
+
+    let chart;
+
+    let reportData = {};
+
+    function startLoading() {
+
+        document.getElementById("loadingBar").style.width = "80%";
+    }
+
+    function stopLoading() {
+
+        document.getElementById("loadingBar").style.width = "100%";
+
+        setTimeout(() => {
+
+            document.getElementById("loadingBar").style.width = "0%";
+
+        }, 500);
+    }
+
+    async function loadData() {
+
+        startLoading();
+
+        try {
+
+            const response = await fetch('/report.json');
+
+            const data = await response.json();
+
+            reportData = data;
+
+            document.getElementById("errors").innerText =
+                data.error_count;
+
+            document.getElementById("warnings").innerText =
+                data.warning_count;
+
+            document.getElementById("critical").innerText =
+                data.critical_count;
+
+            document.getElementById("fails").innerText =
+                data.fail_count;
+
+            document.getElementById("severity").innerText =
+                data.severity;
+
+            updateChart(data);
+
+            updateInsights(data);
+
+            stopLoading();
+
+        }
+
+        catch (error) {
+
+            alert("Unable to load report.json");
+
+            stopLoading();
+        }
+    }
+
+    function updateChart(data) {
+
+        const ctx =
+            document.getElementById('myChart');
+
+        if (chart) {
+
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: [
+                    'Errors',
+                    'Warnings',
+                    'Critical',
+                    'Fails',
+                    'Exceptions'
+                ],
+
+                datasets: [{
+
+                    label: 'Log Metrics',
+
+                    data: [
+
+                        data.error_count,
+                        data.warning_count,
+                        data.critical_count,
+                        data.fail_count,
+                        data.exception_count
+                    ],
+
+                    borderWidth: 2
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        labels: {
+
+                            color: 'white'
+                        }
+                    }
+                },
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+
+                            color: 'white'
+                        }
+                    },
+
+                    y: {
+
+                        ticks: {
+
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateInsights(data) {
+        const insightText = document.getElementById("insightText");
+        const insightPoint1 = document.getElementById("insightPoint1");
+        const insightPoint2 = document.getElementById("insightPoint2");
+        const insightPoint3 = document.getElementById("insightPoint3");
+
+        if (data.severity === "HIGH") {
+            insightText.innerText = "High severity logs detected. Prioritize critical issues and configure CloudWatch alarms for faster incident response.";
+            insightPoint1.innerText = "Investigate critical issues first to avoid major outages.";
+            insightPoint2.innerText = "Enable automated alerts for high-severity events.";
+            insightPoint3.innerText = "Review failed logs immediately and track root cause.";
+        }
+        else if (data.severity === "MEDIUM") {
+            insightText.innerText = "Moderate severity logs detected. Review warnings and tune alert thresholds to reduce noise.";
+            insightPoint1.innerText = "Analyze warning patterns to prevent escalation.";
+            insightPoint2.innerText = "Tune alert filters for more meaningful alerts.";
+            insightPoint3.innerText = "Keep monitoring your log stream for anomalies.";
+        }
+        else {
+            insightText.innerText = "System is stable with low severity. Continue monitoring and keep your alerting strategy active.";
+            insightPoint1.innerText = "Keep dashboards updated for quick visibility.";
+            insightPoint2.innerText = "Maintain automated alerting for new issues.";
+            insightPoint3.innerText = "Use this dashboard as your central log health overview.";
+        }
+    }
+
+    function updateClock() {
+
+        const now = new Date();
+
+        document.getElementById("clock").innerText =
+            now.toLocaleString();
+    }
+
+    function downloadReport() {
+
+        const dataStr =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(
+                JSON.stringify(reportData, null, 2)
+            );
+
+        const downloadAnchor =
+            document.createElement('a');
+
+        downloadAnchor.setAttribute(
+            "href",
+            dataStr
+        );
+
+        downloadAnchor.setAttribute(
+            "download",
+            "log_analysis_report.json"
+        );
+
+        document.body.appendChild(downloadAnchor);
+
+        downloadAnchor.click();
+
+        downloadAnchor.remove();
+    }
+
+    setInterval(updateClock, 1000);
+
+    setInterval(loadData, 10000);
+
+    updateClock();
+
+    loadData();
+
+</script>
+
+</body>
+</html>

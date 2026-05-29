@@ -1,0 +1,76 @@
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clock {
+    font-size: 18px;
+    color: #38bdf8;
+}
+
+.dashboard-card {
+    padding: 25px;
+    border-radius: 16px;
+    transition: 0.3s;
+    color: white;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.red {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.yellow {
+    background: linear-gradient(135deg, #facc15, #ca8a04);
+}
+
+.blue {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.green {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+}
+
+.chart-card,
+.logs-card,
+.severity-card {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 16px;
+}
+
+.severity-card {
+    text-align: center;
+    height: 100%;
+}
+
+.severity-text {
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #38bdf8;
+}
+
+pre {
+    color: #38bdf8;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.loading-bar {
+    height: 4px;
+    background: #38bdf8;
+    width: 0%;
+    transition: 0.5s;
+}
