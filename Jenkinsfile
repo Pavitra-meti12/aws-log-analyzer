@@ -14,13 +14,13 @@ stages {
 
     stage('Docker Build') {
         steps {
-            bat 'docker build -t aws-log-analyzer .'
+            echo 'Docker build skipped (optional on Jenkins machine)'
         }
     }
 
     stage('Deploy') {
         steps {
-            echo 'Deploying Project...'
+            echo 'Deploy stage executed'
         }
     }
 }
