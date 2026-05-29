@@ -12,7 +12,7 @@ stages {
 
     stage('Build') {
         steps {
-            echo 'Building project...'
+            echo 'Building AWS Log Analyzer Project...'
         }
     }
 
@@ -24,7 +24,7 @@ stages {
 
     stage('Deploy') {
         steps {
-            echo 'Deploying project...'
+            echo 'Deploying Project...'
         }
     }
 }
