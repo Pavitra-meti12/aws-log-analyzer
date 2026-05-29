@@ -117,4 +117,8 @@ Exceptions: {len(exceptions)}
         return {
             "statusCode": 500,
             "body": json.dumps(str(e))
+<<<<<<< HEAD
         }
+=======
+        }
+>>>>>>> 0bd12ae3bae9fe21965341ae7700ab885ba38c79
