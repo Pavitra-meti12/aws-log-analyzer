@@ -2,7 +2,7 @@
 
 
 
-\## 📌 Project Overview
+\## 📌 Project Overvie
 
 This project is a \*\*serverless cloud-based log analysis system\*\* built using AWS services.  
 
