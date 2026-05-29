@@ -1,16 +1,33 @@
 pipeline {
-    agent any
+agent any
 
-    stages {
+```
+stages {
 
-        stage('Run Log Analyzer') {
-            steps {
-                bat '"C:\\Users\\pavit\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" lambda_function.py'
-            }
+    stage('Clone Repository') {
+        steps {
+            git 'https://github.com/Pavitra-meti12/aws-log-analyzer.git'
         }
     }
-<<<<<<< HEAD
+
+    stage('Build') {
+        steps {
+            echo 'Building project...'
+        }
+    }
+
+    stage('Docker Build') {
+        steps {
+            bat 'docker build -t aws-log-analyzer .'
+        }
+    }
+
+    stage('Deploy') {
+        steps {
+            echo 'Deploying project...'
+        }
+    }
 }
-=======
+```
+
 }
->>>>>>> 0bd12ae3bae9fe21965341ae7700ab885ba38c79
