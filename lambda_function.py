@@ -32,6 +32,15 @@ def lambda_handler(event, context):
         "warning_count": len(warnings)
     }
 
+    # Save report to S3
+    report_key = f"reports/report_{context.aws_request_id}.json"
+
+    s3.put_object(
+        Bucket=bucket,
+        Key=report_key,
+        Body=json.dumps(report, indent=2)
+    )
+
     return {
         "statusCode": 200,
         "body": json.dumps(report)
