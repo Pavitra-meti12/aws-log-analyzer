@@ -15,15 +15,21 @@ def lambda_handler(event, context):
 
     content = response['Body'].read().decode('utf-8')
 
-    error_count = 0
+    errors = []
+    warnings = []
 
     for line in content.splitlines():
+
         if "ERROR" in line:
-            error_count += 1
+            errors.append(line)
+
+        elif "WARNING" in line:
+            warnings.append(line)
 
     report = {
         "file": key,
-        "error_count": error_count
+        "error_count": len(errors),
+        "warning_count": len(warnings)
     }
 
     return {
