@@ -11,7 +11,6 @@ pipeline {
 
         stage('Test Environment') {
             steps {
-                bat 'git --version'
                 bat 'docker --version'
             }
         }
