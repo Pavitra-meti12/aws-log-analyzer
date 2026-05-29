@@ -3,28 +3,34 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/Pavitra-meti12/aws-log-analyzer.git'
+                checkout scm
+            }
+        }
+
+        stage('Test Environment') {
+            steps {
+                bat 'git --version'
+                bat 'docker --version'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building AWS Log Analyzer Project...'
+                echo 'Building project...'
             }
         }
 
         stage('Docker Build') {
             steps {
-                echo 'Docker build step (run only if Docker installed)'
-                bat 'docker build -t aws-log-analyzer .' 
+                bat 'docker build -t aws-log-analyzer .'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploy stage executed'
+                echo 'Deploy step completed'
             }
         }
     }
