@@ -9,9 +9,9 @@ pipeline {
             }
         }
 
-        stage('Test Environment') {
+        stage('Docker Check') {
             steps {
-                bat 'docker --version'
+                bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" --version'
             }
         }
 
@@ -23,13 +23,13 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t aws-log-analyzer .'
+                bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" build -t aws-log-analyzer .'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploy step completed'
+                echo 'Deploy completed'
             }
         }
     }
